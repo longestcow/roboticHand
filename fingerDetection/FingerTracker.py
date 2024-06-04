@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import serial
 
 # https://colab.research.google.com/github/googlesamples/mediapipe/blob/main/examples/hand_landmarker/python/hand_landmarker.ipynb
 class handDetector():
@@ -16,11 +17,11 @@ class handDetector():
         landmarks = []
         if results.multi_hand_landmarks:
             hand = results.multi_hand_landmarks[0]
-
+            
             self.mpDraw.draw_landmarks(img, hand, self.mpHands.HAND_CONNECTIONS,  # drawing onto image
                self.mpDraw.DrawingSpec(color=(0, 10, 200), thickness=2, circle_radius=4),
                self.mpDraw.DrawingSpec(color=(23, 23, 23), thickness=4))
-
+            
 
             for id, lm in enumerate(hand.landmark):
                 h, w, c = img.shape
@@ -36,8 +37,9 @@ if __name__ == "__main__":
     video.set(3, 1280)
     video.set(4, 720)
     handDetector = handDetector()
-
-    while True:
+    arduino = serial.Serial('COM11', 9600)
+    arduino.write('aaaa;'.encode())
+    while True:    
         success, img = video.read()
         handDetector.findHand(img)
         cv2.imshow('mmmbmm,,, ,,', cv2.flip(img, 1))

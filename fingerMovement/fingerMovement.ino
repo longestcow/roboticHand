@@ -1,29 +1,28 @@
-#include <LiquidCrystal_I2C.h>
 #include <Servo.h>
 
-LiquidCrystal_I2C lcd(0x27,16,2);
 Servo servo;
 void setup() {
+  servo.attach(5);
   Serial.begin(9600);
-  lcd.init();
-  lcd.clear();         
-  lcd.backlight();
-  lcd.setCursor(0,0);
-  lcd.print("waiting");
+  servo.write(0);
+  delay(2000);
 }
 
 char var;
 String input = "";
 
 void loop() {
-  if (Serial.available()) { 
-    lcd.clear();
-    while(Serial.available()>0){
-      var=Serial.read();
-      input+=var;
-    }
-    lcd.setCursor(0,0);
-    lcd.print(input);
-  }
+  servo.write(180);
+  delay(3000);
+  servo.write(0);
+  delay(3000);
+
+
+//  if (Serial.available()) { 
+//    while(Serial.available()>0){
+//      var=Serial.read();
+//      input+=var;
+//    }
+//  }
 
 }

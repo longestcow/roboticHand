@@ -22,29 +22,30 @@ class handDetector():
 
     def findHand(self, img):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        results = self.hands.process(imgRGB)
+        self.results = self.hands.process(imgRGB)
         landmarks = []
         dists = []
-        if results.multi_hand_landmarks:
-            hand = results.multi_hand_landmarks[0]
+        if self.results.multi_hand_landmarks:
+            hand = self.results.multi_hand_landmarks[0]
 
             self.mpDraw.draw_landmarks(img, hand, self.mpHands.HAND_CONNECTIONS,  # drawing onto image
                                        self.mpDraw.DrawingSpec(color=(0, 10, 200), thickness=2, circle_radius=4),
                                        self.mpDraw.DrawingSpec(color=(23, 23, 23), thickness=4))
-
+            
+            if len(hand.landmark)<21: 
+                return []
+            
             for id, lm in enumerate(hand.landmark):
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
-                landmarks.append([cx, cy])
+                if id == 4 or id == 5 or id == 9 or id == 13 or id == 17: 
+                    landmarks.append([cx, cy])
 
                 if id == 8 or id == 12 or id == 16 or id == 20:
-                    ocx, ocy = landmarks[id-3]
-                    dist1 = math.hypot(ocx - cx, ocy - cy) < MIN_DISTANCE
-                    ocx, ocy = landmarks[id-1]
-                    dist2 = math.hypot(ocx - cx, ocy - cy) < MIN_DISTANCE/4
-                    dists.append(dist1 or dist2)
+                    ocx, ocy = landmarks[int((id-4)/4)]
+                    dists.append(math.hypot(ocx - cx, ocy - cy) < MIN_DISTANCE)
 
-                if id == 20:
+                if id == 20: #thumb
                     cx, cy = landmarks[0]
                     for i in range(1, 5):
                         ocx, ocy = landmarks[i]
@@ -53,7 +54,7 @@ class handDetector():
                             break
                     else:
                         dists.insert(0, False)
-
+        
         return dists
 
 
@@ -64,8 +65,9 @@ def sendData(ard):
     s = ''.join(['1' if value else '0' for value in distances])
     if s == prevs:
         return
-
-    ard.write((s+'\n').encode())
+    print(s)
+    
+    ard.write((s).encode())
     prevs = s
 
 
@@ -77,7 +79,7 @@ if __name__ == "__main__":
 
     handDetector = handDetector()
 
-    arduino = serial.Serial('COM3', 9600)
+    arduino = serial.Serial('COM9', 9600, write_timeout = 0)
     schedule.every(1).seconds.do(sendData,  arduino)
 
     while True:

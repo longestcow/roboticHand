@@ -1,18 +1,17 @@
 #include <Servo.h>
 
+String input = "default"; char var;
 
+char fingers[] = "00000"; //contains the latest input from python
+char cfingers[] = "00000"; //contains the current finger positions on the robot
 Servo servos[5];
+
 void setup() {
   for(int i = 0; i<5; i++){
     servos[i].attach(i+1);
   }
   Serial.begin(9600);
 }
-
-String input = "default"; char var;
-
-char fingers[] = "00000"; //contains the latest input from python
-char cfingers[] = "00000"; //contains the current finger positions on the robot
 
 void loop() {
   if (Serial.available() > 0) {

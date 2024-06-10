@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     handDetector = handDetector()
 
-    arduino = serial.Serial('COM3', 9600, write_timeout=0)
+    arduino = serial.Serial('COM9', 9600, write_timeout=0)
     schedule.every(1).seconds.do(sendData, arduino)
 
     while True:

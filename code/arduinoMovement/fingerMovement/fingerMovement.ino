@@ -4,8 +4,8 @@ String input = "default"; char var;
 
 char fingers[] = "00000"; //contains the latest input from python
 char cfingers[] = "00000"; //contains the current finger positions on the robot
-int off[] = {0,180,0,180,0};
-int on[] = {180,0,180,0,160};
+int off[] = {0,180,180,0,0};
+int on[] = {130,50,50,130,120};
 //confirmed 11111
 Servo servos[5];
 
